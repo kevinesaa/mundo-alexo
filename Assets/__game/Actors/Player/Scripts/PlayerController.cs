@@ -1,24 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInput))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     public bool seeToRight = true;
     public float baseSpeed = 5f;
     public float baseJumpForce = 5f;
     public float maxFallVelocity = -25f;
-
+    
+    public float coyoteDuration = 0.05f;
     public float groundDistance = 0.2f;
     public Transform transfromGroundLeftCheck;
     public Transform transfromGroundRightCheck;
-    public LayerMask layerGround;
 
+    private LayerMask layerGround;
     private int direction;
     private PlayerInput playerInput;
     private Rigidbody2D mRigidbody2D;
+    private float coyoteTime;
     private bool isTochingGround;
+    private IInteractable mInteractable;
+
+    public void SetInteractable(IInteractable interactable)
+    {
+        mInteractable = interactable;
+    }
+
+    private void Awake()
+    {
+        layerGround = LayerMask.GetMask("Ground");
+    }
 
     void Start()
     {
@@ -26,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
         direction = seeToRight ? 1 : -1;
 
         mRigidbody2D = GetComponent<Rigidbody2D>();
+        
         Flip();
     }
 
@@ -35,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
         CheckPhysics();
         AirMovement();
         Movement();
-
+        Interactions();
     }
 
     private void Flip()
@@ -53,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit2D groundLeftCheckHit = Physics2D.Raycast(transfromGroundLeftCheck.position, Vector2.down, groundDistance, layerGround);
         RaycastHit2D groundRightCheckHit = Physics2D.Raycast(transfromGroundRightCheck.position, Vector2.down, groundDistance, layerGround);
         isTochingGround = groundLeftCheckHit || groundRightCheckHit;
+
 #if UNITY_EDITOR
         Color colorLeft = groundLeftCheckHit ? Color.green : Color.red;
         Debug.DrawRay(transfromGroundLeftCheck.position,Vector2.down*groundDistance,colorLeft);
@@ -63,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void AirMovement()
     {
-        if (isTochingGround && playerInput.JumpButtonPressed)
+        if (playerInput.JumpButtonPressed  && (isTochingGround || coyoteTime > Time.time))
         {
             mRigidbody2D.AddForce(baseJumpForce * Vector2.up, ForceMode2D.Impulse);
         }
@@ -82,5 +96,16 @@ public class PlayerMovement : MonoBehaviour
         Vector2 currentVelocity = mRigidbody2D.velocity;
         currentVelocity.x = xVelocity;
         mRigidbody2D.velocity = currentVelocity;
+
+        if (isTochingGround)
+            coyoteTime = Time.time + coyoteDuration;
+    }
+
+    private void Interactions()
+    {
+        if (mInteractable != null && playerInput.ActionButtonPressed)
+        {
+            mInteractable.Interact();
+        }
     }
 }

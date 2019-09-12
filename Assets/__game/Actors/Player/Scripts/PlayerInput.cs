@@ -6,6 +6,8 @@ using UnityEngine;
 [DefaultExecutionOrder(-10)]
 public class PlayerInput : MonoBehaviour
 {
+    public bool ActionButtonPressed { get; private set; }
+    public bool ActionButtonKeepPressing { get; private set; }
     public bool JumpButtonPressed { get; private set; }
     public bool JumpButtonKeepPressing { get; private set; }
     public float AxisMoveX { get; private set; }
@@ -29,6 +31,8 @@ public class PlayerInput : MonoBehaviour
             return;
 
         AxisMoveX = 0;
+        ActionButtonPressed = false;
+        ActionButtonKeepPressing = false;
         JumpButtonPressed = false;
         JumpButtonKeepPressing = false;
         readyToCleanInput = false;
@@ -36,6 +40,8 @@ public class PlayerInput : MonoBehaviour
 
     private void ProcessInput()
     {
+        ActionButtonPressed = ActionButtonPressed || Input.GetButtonDown("Action");
+        ActionButtonKeepPressing = ActionButtonKeepPressing || Input.GetButton("Action");
         JumpButtonPressed = JumpButtonPressed || Input.GetButtonDown("Jump");
         JumpButtonKeepPressing = JumpButtonKeepPressing || Input.GetButton("Jump");
         AxisMoveX += Input.GetAxis("Horizontal");
