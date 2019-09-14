@@ -9,9 +9,10 @@ public class MinionController : MonoBehaviour, IInteractable
     public float maxDurationMoveAfterFalling = 0.8f;
     public float checkObstaculeDistance = 0.5f;
     public Transform checkObstaculeOriginPosition;
-    
+
+    public bool IsMoving { get; set; }
+
     private PlayerController player;
-    private bool moving;
     private LayerMask layerPlayer;
     private bool isPlayerEnter;
     private Rigidbody2D mRigidbody;
@@ -21,30 +22,31 @@ public class MinionController : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        player.SetInteractable(null);
         if (isPlayerEnter)
         {
             //todo show gorra
-            moving = true;
+            IsMoving = true;
             isPlayerEnter = false;
-            player.SetInteractable(null);
             player = null;
         }
-        else
-        {
-            player.SetInteractable(null);
-        }
+    }
+
+    public void EnterPortal()
+    {
+        gameObject.SetActive(false);
     }
 
     private void Awake()
     {
-        moving = false;
+        IsMoving = false;
         layerPlayer = LayerMask.GetMask("Player");
         mRigidbody = GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
     {
-        if (!moving)
+        if (!IsMoving)
         {
             ChekOnPlayerEnter();
         }
