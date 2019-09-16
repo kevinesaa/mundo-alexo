@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour
     public Transform transfromGroundRightCheck;
 
     private LayerMask layerGround;
-    private int direction;
     private PlayerInput playerInput;
     private Rigidbody2D mRigidbody2D;
     private float coyoteTime;
@@ -27,6 +26,14 @@ public class PlayerController : MonoBehaviour
         mInteractable = interactable;
     }
 
+    public void ResetDirection()
+    {
+        int direction = seeToRight ? 1 : -1;
+        Vector3 v = transform.right;
+        v.x = direction;
+        transform.right = v;
+    }
+
     private void Awake()
     {
         layerGround = LayerMask.GetMask("Ground");
@@ -35,10 +42,10 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         playerInput = GetComponent<PlayerInput>();
-        direction = seeToRight ? 1 : -1;
+        ResetDirection();
 
         mRigidbody2D = GetComponent<Rigidbody2D>();
-        
+
         Flip();
     }
 
@@ -53,10 +60,9 @@ public class PlayerController : MonoBehaviour
 
     private void Flip()
     {
-        if (playerInput.AxisMoveX * direction < 0)
+        if (playerInput.AxisMoveX * transform.right.x < 0)
         {
             transform.Rotate(0, 180, 0);
-            direction *= -1;
         }
     }
 
@@ -79,6 +85,10 @@ public class PlayerController : MonoBehaviour
     {
         if (playerInput.JumpButtonPressed  && (isTochingGround || coyoteTime > Time.time))
         {
+            float gravityScale = mRigidbody2D.gravityScale;
+            Vector2 velocity = mRigidbody2D.velocity;
+            velocity.y = 0;
+            mRigidbody2D.velocity = velocity;
             mRigidbody2D.AddForce(baseJumpForce * Vector2.up, ForceMode2D.Impulse);
         }
 
