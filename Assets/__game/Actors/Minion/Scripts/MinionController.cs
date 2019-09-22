@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-public class MinionController : MonoBehaviour, IInteractable
+public class MinionController : MonoBehaviour
 {
     public float speedMove = 4.5f;
     public float radiusInteractable = 0.5f;
@@ -12,25 +12,10 @@ public class MinionController : MonoBehaviour, IInteractable
 
     public bool IsMoving { get; set; }
 
-    private PlayerController player;
-    private LayerMask layerPlayer;
-    private bool isPlayerEnter;
     private Rigidbody2D mRigidbody;
     private float fallTime;
     private bool isFalling;
     private bool hasObstacule;
-
-    public void Interact()
-    {
-        player.SetInteractable(null);
-        if (isPlayerEnter)
-        {
-            //todo show gorra
-            IsMoving = true;
-            isPlayerEnter = false;
-            player = null;
-        }
-    }
 
     public void EnterPortal()
     {
@@ -40,17 +25,12 @@ public class MinionController : MonoBehaviour, IInteractable
     private void Awake()
     {
         IsMoving = false;
-        layerPlayer = LayerMask.GetMask("Player");
         mRigidbody = GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
     {
-        if (!IsMoving)
-        {
-            ChekOnPlayerEnter();
-        }
-        else
+        if (IsMoving)
         {
             CheckForObstacule();
             Flip();
@@ -73,20 +53,6 @@ public class MinionController : MonoBehaviour, IInteractable
         if (hasObstacule)
         {
             transform.Rotate(0, 180, 0);
-        }
-    }
-
-    private void ChekOnPlayerEnter()
-    {
-        Collider2D colliderRadius = Physics2D.OverlapCircle(transform.position, radiusInteractable, layerPlayer);
-        isPlayerEnter = colliderRadius;
-        if (isPlayerEnter)
-        {
-            if (player == null)
-            {
-                player = colliderRadius.gameObject.GetComponent<PlayerController>();
-            }
-            player.SetInteractable(this);
         }
     }
 
