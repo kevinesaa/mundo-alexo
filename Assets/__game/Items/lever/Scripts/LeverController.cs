@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class LeverController : MonoBehaviour
 {
 
-    public UnityEvent<bool> OnLeverChangeCallback;
+    public event Action<bool> OnLeverChangeCallback;
     public bool intialState = false;
 
     public bool State { get; private set; }
@@ -34,7 +35,7 @@ public class LeverController : MonoBehaviour
         //sound change
         //animation change
         if (OnLeverChangeCallback != null) {
-            OnLeverChangeCallback.Invoke(State);
+            OnLeverChangeCallback(State);
         }
            
     }
