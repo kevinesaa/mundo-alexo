@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelController : MonoBehaviour
 {
@@ -62,10 +63,10 @@ public class LevelController : MonoBehaviour
     {
         cinemachineVirtualCamera.Follow = player.transform;
         LensSettings settings = cinemachineVirtualCamera.m_Lens;
-        settings.OrthographicSize = 3;
+        settings.OrthographicSize = 5;
         cinemachineVirtualCamera.m_Lens = settings;
         CinemachineFramingTransposer cinemachineFramingTransposer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
-        cinemachineFramingTransposer.m_LookaheadTime = 0.3f;
+        cinemachineFramingTransposer.m_LookaheadTime = 0.5f;
         cinemachineFramingTransposer.m_LookaheadSmoothing = 15;
         cinemachineFramingTransposer.m_XDamping = 1;
         cinemachineFramingTransposer.m_YDamping = 1;
@@ -84,7 +85,8 @@ public class LevelController : MonoBehaviour
         MiniontEnterPortalCount++;
         if (AllMinionsPassThePortal)
         {
-
+            Scene currentScene=SceneManager.GetActiveScene();
+            SceneManager.LoadSceneAsync(currentScene.buildIndex + 1);
         }
     }
 }

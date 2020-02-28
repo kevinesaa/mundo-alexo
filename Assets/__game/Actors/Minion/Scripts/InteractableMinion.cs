@@ -23,7 +23,8 @@ public class InteractableMinion : CommonInteractableMonoBehaviour
         Player.SetInteractable(null);
         if (IsPlayerEnter)
         {
-            //todo show gorra
+            if (minion.hat != null)
+                minion.hat.SetActive(true);
             minion.IsMoving = true;
             IsPlayerEnter = false;
             Player = null;

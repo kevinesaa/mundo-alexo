@@ -3,6 +3,7 @@
 
 public class MinionController : MonoBehaviour
 {
+    public GameObject hat;
     public float speedMove = 4.5f;
     public float radiusInteractable = 0.5f;
     public float maxFallSpeed = -25f;

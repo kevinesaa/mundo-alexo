@@ -15,12 +15,6 @@ public class Splash : MonoBehaviour
 
     private AsyncOperation scenaAsyncOperation = null;
 
-    
-    private void Awake()
-    {
-        
-    }
-
     void Start()
     {
         
@@ -34,8 +28,8 @@ public class Splash : MonoBehaviour
         Invoke("LoadScene", delayInSeconds);
     }
 
-    // Update is called once per frame
-    void Update()
+    
+    void OnGUI()
     {
         if (scenaAsyncOperation != null && loadingBar != null)
         {

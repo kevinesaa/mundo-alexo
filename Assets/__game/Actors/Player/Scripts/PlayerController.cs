@@ -14,13 +14,18 @@ public class PlayerController : MonoBehaviour
     public Transform transfromGroundLeftCheck;
     public Transform transfromGroundRightCheck;
 
+    public bool IsOnTheGround { get { return (isTochingGround || coyoteTime > Time.time); } }
+
     private LayerMask layerGround;
     private PlayerInput playerInput;
     private Rigidbody2D mRigidbody2D;
     private float coyoteTime;
     private bool isTochingGround;
     private IInteractable mInteractable;
-
+#if UNITY_EDITOR
+    RaycastHit2D editorGroundLeftCheckHit;
+    RaycastHit2D editorGroundRightCheckHit;
+#endif
     public void SetInteractable(IInteractable interactable)
     {
         mInteractable = interactable;
@@ -57,7 +62,15 @@ public class PlayerController : MonoBehaviour
         Movement();
         Interactions();
     }
-
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Color colorLeft = editorGroundLeftCheckHit ? Color.green : Color.red;
+        Debug.DrawRay(transfromGroundLeftCheck.position, Vector2.down * groundDistance, colorLeft);
+        Color colorRight = editorGroundRightCheckHit ? Color.green : Color.red;
+        Debug.DrawRay(transfromGroundRightCheck.position, Vector2.down * groundDistance, colorRight);
+    }
+#endif
     private void Flip()
     {
         if (playerInput.AxisMoveX * transform.right.x < 0)
@@ -74,10 +87,8 @@ public class PlayerController : MonoBehaviour
         isTochingGround = groundLeftCheckHit || groundRightCheckHit;
 
 #if UNITY_EDITOR
-        Color colorLeft = groundLeftCheckHit ? Color.green : Color.red;
-        Debug.DrawRay(transfromGroundLeftCheck.position,Vector2.down*groundDistance,colorLeft);
-        Color colorRight = groundRightCheckHit ? Color.green : Color.red;
-        Debug.DrawRay(transfromGroundRightCheck.position, Vector2.down * groundDistance, colorRight);
+        editorGroundLeftCheckHit = groundLeftCheckHit;
+        editorGroundRightCheckHit = groundRightCheckHit;
 #endif
     }
 

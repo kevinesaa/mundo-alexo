@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class ActionableElement : MonoBehaviour
 {
-    public LeverController lever;
+    public LeverController[] levers;
     public bool initialStatus;
     public bool Status { get; private set; }
 
@@ -15,18 +15,26 @@ public abstract class ActionableElement : MonoBehaviour
 
     private void Awake()
     {
-        if(lever!=null)
+        if(levers!=null && levers.Length > 0)
         {
-            lever.OnLeverChangeCallback += ActinableSourceChange;
+            foreach (LeverController it in levers)
+            {
+                it.OnLeverChangeCallback += ActinableSourceChange;
+            }
+            
         }
         OnInit();
     }
 
     private void OnDestroy()
     {
-        if (lever != null)
+        if (levers != null && levers.Length > 0)
         {
-            lever.OnLeverChangeCallback -= ActinableSourceChange;
+            foreach (LeverController it in levers)
+            {
+                it.OnLeverChangeCallback -= ActinableSourceChange;
+            }
+
         }
     }
 
